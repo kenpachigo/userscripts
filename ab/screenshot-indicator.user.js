@@ -18,7 +18,7 @@ async function getScreenshots(groupId, torrentId) {
     const doc = parser.parseFromString(html, "text/html");
 
     const collage = doc.querySelector(`#collage_${torrentId}`);
-    return (collage === "null") ? 0 : collage.querySelectorAll("td:not([colspan])").length;
+    return collage?.querySelectorAll("td:not([colspan])").length || 0;
 }
 
 async function addIndicator(torrentGroup) {
