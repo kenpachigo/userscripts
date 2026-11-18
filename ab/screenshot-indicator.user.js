@@ -41,21 +41,22 @@
         document.querySelectorAll("tr.group_torrent").forEach(torrentGroup => addIndicator(torrentGroup));
     }
 
-    function isSeriesAiring() {
-        const title = document.querySelector("div:has(> div.linkbox) > h2");
-        return title?.textContent.includes("[Airing]") || false
-    }
-
     function addShortcut() {
-        if (isSeriesAiring()) {
-            if (DEBUG) console.debug("The anime is currently airing, there are no screenshots");
-            return;
-        }
         const shortcut = document.createElement("a");
         shortcut.href = "#";
         shortcut.textContent = "[Add screenshot indicators]";
         shortcut.addEventListener("click", addIndicatorAll);
         document.querySelector("div .linkbox").appendChild(shortcut);
+    }
+
+    function isSeriesAiring() {
+        const title = document.querySelector("div:has(> div.linkbox) > h2");
+        return title?.textContent.includes("[Airing]") || false
+    }
+
+    if (isSeriesAiring()) {
+        if (DEBUG) console.debug("The anime is currently airing, there are no screenshots");
+        return;
     }
 
     addShortcut();
