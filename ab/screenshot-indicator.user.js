@@ -8,51 +8,57 @@
 // @grant       none
 // ==/UserScript==
 
-const DEBUG = false // set to `true` for debugging
+(function() {
+    'use strict';
 
-async function getScreenshots(groupId, torrentId) {
-    const url = `https://animebytes.tv/torrents.php?id=${groupId}&torrentid=${torrentId}&screenshots=${torrentId}`;
-    const response = await fetch(url);
-    const html = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+    const DEBUG = false; // set to `true` for debugging
 
-    const collage = doc.querySelector(`#collage_${torrentId}`);
-    return collage?.querySelectorAll("td:not([colspan])").length || 0;
-}
+    if (DEBUG) console.group("AB Screenshot Indicator");
 
-async function addIndicator(torrentGroup) {
-    const groupId = window.location.href.match(/\bid=(\d+)/)[1];
-    const torrentId = torrentGroup.nextElementSibling.id.slice(8);
-    const screenshotsNumber = await getScreenshots(groupId, torrentId);
+    async function getScreenshots(groupId, torrentId) {
+        const url = `https://animebytes.tv/torrents.php?id=${groupId}&torrentid=${torrentId}&screenshots=${torrentId}`;
+        const response = await fetch(url);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
 
-    if (screenshotsNumber > 0) {
-        const screenshotNode = document.createTextNode(` | 📷[${screenshotsNumber}]`);
-        torrentGroup.querySelector("td > a").appendChild(screenshotNode);
+        const collage = doc.querySelector(`#collage_${torrentId}`);
+        return collage?.querySelectorAll("td:not([colspan])").length || 0;
     }
-}
 
-function addIndicatorAll() {
-    document.querySelectorAll("tr.group_torrent").forEach(torrentGroup => addIndicator(torrentGroup));
-}
+    async function addIndicator(torrentGroup) {
+        const groupId = window.location.href.match(/\bid=(\d+)/)[1];
+        const torrentId = torrentGroup.nextElementSibling.id.slice(8);
+        const screenshotsNumber = await getScreenshots(groupId, torrentId);
 
-function isSeriesAiring() {
-    const title = document.querySelector("div:has(> div.linkbox) > h2")
-    return title?.textContent.includes("[Airing]") || false
-}
-
-function addShortcut() {
-    if (isSeriesAiring()) {
-        if (DEBUG) console.debug("The anime is currently airing, there are no screenshots")
-        return
+        if (screenshotsNumber > 0) {
+            const screenshotNode = document.createTextNode(` | 📷[${screenshotsNumber}]`);
+            torrentGroup.querySelector("td > a").appendChild(screenshotNode);
+        }
     }
-    const shortcut = document.createElement("a");
-    shortcut.href = "#";
-    shortcut.textContent = "[Add screenshot indicators]";
-    shortcut.addEventListener("click", addIndicatorAll);
-    document.querySelector("div .linkbox").appendChild(shortcut);
-}
 
-if (DEBUG) console.group("AB Screenshot Indicator")
-addShortcut();
-if (DEBUG) console.groupEnd()
+    function addIndicatorAll() {
+        document.querySelectorAll("tr.group_torrent").forEach(torrentGroup => addIndicator(torrentGroup));
+    }
+
+    function isSeriesAiring() {
+        const title = document.querySelector("div:has(> div.linkbox) > h2");
+        return title?.textContent.includes("[Airing]") || false
+    }
+
+    function addShortcut() {
+        if (isSeriesAiring()) {
+            if (DEBUG) console.debug("The anime is currently airing, there are no screenshots");
+            return;
+        }
+        const shortcut = document.createElement("a");
+        shortcut.href = "#";
+        shortcut.textContent = "[Add screenshot indicators]";
+        shortcut.addEventListener("click", addIndicatorAll);
+        document.querySelector("div .linkbox").appendChild(shortcut);
+    }
+
+    addShortcut();
+
+    if (DEBUG) console.groupEnd();
+})();
