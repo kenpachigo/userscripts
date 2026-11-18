@@ -32,8 +32,14 @@
         const screenshotsNumber = await getScreenshots(groupId, torrentId);
 
         if (screenshotsNumber > 0) {
-            const screenshotNode = document.createTextNode(` | 📷[${screenshotsNumber}]`);
-            torrentGroup.querySelector("td > a").appendChild(screenshotNode);
+            const span = document.createElement("span");
+            span.textContent = `🖼️ (${screenshotsNumber})`;
+            span.title = `${screenshotsNumber} screenshots`;
+            span.classList.add("screenshot-indicator");
+
+            const torrentItem = torrentGroup.querySelector("td > a");
+            torrentItem.appendChild(document.createTextNode(" | "));
+            torrentItem.appendChild(span);
         }
     }
 
