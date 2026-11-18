@@ -27,6 +27,12 @@
     }
 
     async function addIndicator(torrentGroup) {
+        // Prevent to duplicate indicator
+        if (torrentGroup.querySelector(".screenshot-indicator")) {
+            if (DEBUG) console.warn("Indicator already added")
+            return;
+        }
+
         const groupId = window.location.href.match(/\bid=(\d+)/)[1];
         const torrentId = torrentGroup.nextElementSibling.id.slice(8);
         const screenshotsNumber = await getScreenshots(groupId, torrentId);
