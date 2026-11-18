@@ -13,7 +13,15 @@
 
     const DEBUG = false; // set to `true` for debugging
 
-    if (DEBUG) console.group("AB Screenshot Indicator");
+    const logger = (() => {
+        const prefix = "[AB Screenshot Indicator]";
+
+        return {
+            log: console.log.bind(console, prefix),
+            debug: console.debug.bind(console, prefix),
+            warn: console.warn.bind(console, prefix),
+        }
+    })();
 
     async function getScreenshots(groupId, torrentId) {
         const url = `https://animebytes.tv/torrents.php?id=${groupId}&torrentid=${torrentId}&screenshots=${torrentId}`;
@@ -29,7 +37,7 @@
     async function addIndicator(torrentGroup) {
         // Prevent to duplicate indicator
         if (torrentGroup.querySelector(".screenshot-indicator")) {
-            if (DEBUG) console.warn("Indicator already added")
+            if (DEBUG) logger.warn("Indicator already added");
             return;
         }
 
@@ -55,6 +63,7 @@
 
     function addShortcut() {
         const shortcut = document.createElement("a");
+        shortcut.id = "showScreenIndicator";
         shortcut.href = "#";
         shortcut.textContent = "[Add screenshot indicators]";
         shortcut.addEventListener("click", addIndicatorAll);
@@ -67,11 +76,9 @@
     }
 
     if (isSeriesAiring()) {
-        if (DEBUG) console.debug("The anime is currently airing, there are no screenshots");
+        if (DEBUG) logger.debug("The anime is currently airing, there are no screenshots");
         return;
     }
 
     addShortcut();
-
-    if (DEBUG) console.groupEnd();
 })();
