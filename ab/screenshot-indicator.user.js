@@ -1,12 +1,15 @@
 // ==UserScript==
 // @name        AB - Screenshot Indicator
-// @author      Perilune
-// @version     0.1
-// @namespace   https://github.com/soranosita
-// @include     https://animebytes.tv/torrents.php?*id=*
+// @namespace   https://kenpachigo.github.io
+// @match       https://animebytes.tv/torrents.php?*id=*
 // @icon        https://animebytes.tv/favicon.ico
 // @grant       none
+// @version     1.0
+// @author      -
+// @downloadURL https://raw.githubusercontent.com/kenpachigo/userscripts/refs/heads/main/ab/screenshot-indicator.user.js
 // ==/UserScript==
+
+// Based on: https://gist.github.com/soranosita/f9df8e64def0b8b10e1fa0eea1d43fe1
 
 (function() {
     'use strict';
